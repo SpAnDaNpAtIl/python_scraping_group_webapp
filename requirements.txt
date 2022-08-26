@@ -10,6 +10,7 @@ dash-core-components==2.0.0
 dash-html-components==2.0.0
 dash-table==5.0.0
 Flask==2.2.2
+Flask-httpauth==4.7.0
 Flask-Compress==1.12
 Flask-SeaSurf==1.1.1
 gunicorn==20.1.0

@@ -1,16 +1,32 @@
 from dash import Dash, html, dcc, dash_table
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
-import dash_auth
 
 from utils import *
 
-VALID_USERNAME_PASSWORD_PAIRS = {
-    'admin': '123'
+from flask import Flask, redirect
+from flask_httpauth import HTTPBasicAuth
+from werkzeug.security import generate_password_hash, check_password_hash
+
+server = Flask(__name__)
+app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.icons.BOOTSTRAP], server=server, url_base_pathname='/dash/')
+auth = HTTPBasicAuth()
+
+users = {
+    "admin": generate_password_hash("123"),
+    "spandan": generate_password_hash("patil")
 }
 
-app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.icons.BOOTSTRAP])
-auth = dash_auth.BasicAuth(app,VALID_USERNAME_PASSWORD_PAIRS)
+@auth.verify_password
+def verify_password(username, password):
+    if username in users and \
+            check_password_hash(users.get(username), password):
+        return username
+
+@server.route('/')
+@auth.login_required
+def index():
+    return redirect('/dash/')
 
 app.layout = html.Div([
     dbc.Navbar(
