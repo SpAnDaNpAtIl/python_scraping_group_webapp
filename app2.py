@@ -23,18 +23,10 @@ def verify_password(username, password):
             check_password_hash(users.get(username), password):
         return username
 
-@auth.error_handler
-def auth_error(status):
-    return "Get outta here", status
-
 @server.route('/')
 @auth.login_required
 def index():
     return redirect('/dash/')
-
-for view_func in server.view_functions:
-    if view_func.startswith(app.config['url_base_pathname']):
-        server.view_functions[view_func] = auth.login_required(server.view_functions[view_func])
 
 app.layout = html.Div([
     dbc.Navbar(
